@@ -1,0 +1,33 @@
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+
+# Virtual/conda environments inside project (if any)
+venv/
+.venv/
+env/
+mcp_env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Editor/IDE
+.vscode/
+
+# Environment and local files
+.env
+.env.*
+
+# Build & logs
+*.log
+build/
+dist/
+*.egg-info/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Temporary generated files
+installed_packages.txt
+full_venv_list.txt

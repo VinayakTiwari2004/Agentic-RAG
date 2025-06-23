@@ -1,0 +1,2 @@
+<content> {context} <content> 
+User Question: {question}

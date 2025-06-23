@@ -1,0 +1,15 @@
+fastapi==0.115.9
+uvicorn==0.34.3
+chromadb==1.0.12
+PyMuPDF==1.26.1
+pdfplumber==0.11.7
+sentence-transformers==3.0.0
+langchain==0.3.26
+langgraph==0.4.8
+farm-haystack==1.26.4.post0
+tavily==0.3.1  # If you're using Tavily (optional)
+transformers==4.52.4
+torch==2.6.0
+requests==2.32.4
+python-dotenv==1.1.0
+pydantic==2.11.7
