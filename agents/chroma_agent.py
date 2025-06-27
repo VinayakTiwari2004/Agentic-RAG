@@ -1,14 +1,29 @@
-# chroma_agent.py
-
 from chromadb import PersistentClient
+from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 
+# Load embedding model
+embedding_func = SentenceTransformerEmbeddingFunction(model_name="BAAI/bge-large-en")
+
+# Initialize ChromaDB client
 chroma_client = PersistentClient(path="./chroma_storage")
 
-def search_chroma(query, collection_name):
-    collection = chroma_client.get_collection(collection_name)
-    results = collection.query(query_texts=[query], n_results=5)
+def search_chroma(query: str, collection_name: str, top_k: int = 15):  
+    collection = chroma_client.get_or_create_collection(
+        name=collection_name,
+        embedding_function=embedding_func
+    )
+
+    results = collection.query(
+        query_texts=[query],
+        n_results=top_k,
+        include=["documents", "distances", "metadatas"]  # Include metadata
+    )
 
     return [
-        {"chunk": doc, "score": score}
-        for doc, score in zip(results["documents"][0], results["distances"][0])
+        {
+            "chunk": doc,
+            "score": 1 - dist,              # Convert distance to similarity score
+            "metadata": metadata            # Pass filename or other metadata
+        }
+        for doc, dist, metadata in zip(results["documents"][0], results["distances"][0], results["metadatas"][0])
     ]

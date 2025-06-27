@@ -6,7 +6,7 @@ __pycache__/
 venv/
 .venv/
 env/
-mcp_env/
+mcp-py13/
 
 # Jupyter
 .ipynb_checkpoints/
@@ -28,6 +28,4 @@ dist/
 .DS_Store
 Thumbs.db
 
-# Temporary generated files
-installed_packages.txt
-full_venv_list.txt
+

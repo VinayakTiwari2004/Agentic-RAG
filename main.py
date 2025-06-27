@@ -1,14 +1,17 @@
-# main.py
-
+import asyncio
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
+from uuid import uuid4
 
 from core.orchestrator import get_response
 from agents.url_agent import crawl_and_store_url
 from agents.doc_agent import ingest_document
+import asyncio
+import sys
+if sys.platform.startswith("win"):
+    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 
-from uuid import uuid4
 
 app = FastAPI()
 
@@ -18,9 +21,9 @@ app = FastAPI()
 
 class QueryRequest(BaseModel):
     query: str
-    agents: List[str]  # ["chromadb", "document", "tavily"]
-    url_collection: Optional[str] = None
-    doc_collection: Optional[str] = None
+    agents: List[str]
+    url_collections: Optional[List[str]] = None
+    doc_collections: Optional[List[str]] = None
 
     class Config:
         arbitrary_types_allowed = True
@@ -36,7 +39,7 @@ class QueryResponse(BaseModel):
 
 
 class UrlPushRequest(BaseModel):
-    url: str
+    urls: List[str]  # Accepts multiple URLs
 
     class Config:
         arbitrary_types_allowed = True
@@ -51,7 +54,7 @@ class UrlPushResponse(BaseModel):
 
 
 class DocPushRequest(BaseModel):
-    file_path: str
+    file_paths: List[str]  # Accepts multiple file paths
 
     class Config:
         arbitrary_types_allowed = True
@@ -64,30 +67,39 @@ class DocPushResponse(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
+
 # =====================
 #  Endpoints
 # =====================
 
-@app.post("/push/url", response_model=UrlPushResponse)
-async def push_url(data: UrlPushRequest):
-    collection_id = str(uuid4())
-    crawl_and_store_url(data.url, collection_id)
-    return {
-        "message": f" URL data from {data.url} stored in ChromaDB collection: {collection_id}",
-        "collection_id": collection_id
-    }
+@app.post("/push/url", response_model=List[UrlPushResponse])
+def push_urls(data: UrlPushRequest):
+    responses = []
+    for url in data.urls:
+        collection_id = str(uuid4())
+        message = crawl_and_store_url(url, collection_id)
+        responses.append({
+            "message": message,
+            "collection_id": collection_id
+        })
+    return responses
 
-@app.post("/push/document", response_model=DocPushResponse)
-async def push_document(data: DocPushRequest):
-    result = ingest_document(data.file_path)
-    return result  #  directly return the dict from doc_agent
+
+@app.post("/push/document", response_model=List[DocPushResponse])
+async def push_documents(data: DocPushRequest):
+    responses = []
+    for path in data.file_paths:
+        result = ingest_document(path)
+        responses.append(result)
+    return responses
+
 
 @app.post("/query", response_model=QueryResponse)
 async def query_llm(payload: QueryRequest):
     result = get_response(
         user_query=payload.query,
         agents=payload.agents,
-        url_collection=payload.url_collection,
-        doc_collection=payload.doc_collection
+        url_collections=payload.url_collections,
+        doc_collections=payload.doc_collections
     )
     return QueryResponse(**result)

@@ -3,15 +3,15 @@
 from graph.query_graph import build_query_graph
 from llm.granite_llm import query_local_llm
 
-def get_response(user_query: str, agents: list, url_collection=None, doc_collection=None) -> dict:
+def get_response(user_query: str, agents: list, url_collections=None, doc_collections=None) -> dict:
     print(" Incoming Query:", user_query)
     print(" Active Agents:", agents)
 
     # Initial state
     state = {
         "user_query": user_query,
-        "url_collection": url_collection,
-        "doc_collection": doc_collection,
+        "url_collections": url_collections or [],
+        "doc_collections": doc_collections or [],
         "chunks": [],
         "context_parts": [],
         "data_sources": []
