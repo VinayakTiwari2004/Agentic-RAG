@@ -16,7 +16,7 @@ def build_query_graph(selected_agents: List[str]):
     builder = StateGraph(AgentState)
 
     agent_node_map = {
-        "crawler": ("crawler", chroma_node),  # ✅ updated key and node_name
+        "crawler": ("crawler", chroma_node),  #  updated key and node_name
         "document": ("document", document_node),
         "tavily": ("tavily", tavily_node),
         "universal_kb": ("universal_kb", universal_kb_node)
