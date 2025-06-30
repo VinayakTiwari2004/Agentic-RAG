@@ -4,11 +4,10 @@ from langgraph.graph import StateGraph, END
 from graph.agent_nodes import chroma_node, document_node, tavily_node, universal_kb_node
 from typing import TypedDict, List, Dict, Any
 
-#  Updated: Define the new shape of the state with lists
 class AgentState(TypedDict):
     user_query: str
-    url_collections: List[str]  #  changed from str to List[str]
-    doc_collections: List[str]  #  changed from str to List[str]
+    url_collections: List[str]
+    doc_collections: List[str]
     chunks: List[Dict[str, Any]]
     context_parts: List[str]
     data_sources: List[str]
@@ -17,7 +16,7 @@ def build_query_graph(selected_agents: List[str]):
     builder = StateGraph(AgentState)
 
     agent_node_map = {
-        "chromadb": ("chromadb", chroma_node),
+        "crawler": ("crawler", chroma_node),  # ✅ updated key and node_name
         "document": ("document", document_node),
         "tavily": ("tavily", tavily_node),
         "universal_kb": ("universal_kb", universal_kb_node)

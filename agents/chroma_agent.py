@@ -16,14 +16,14 @@ def search_chroma(query: str, collection_name: str, top_k: int = 15):
     results = collection.query(
         query_texts=[query],
         n_results=top_k,
-        include=["documents", "distances", "metadatas"]  # Include metadata
+        include=["documents", "distances", "metadatas"]
     )
 
     return [
         {
             "chunk": doc,
-            "score": 1 - dist,              # Convert distance to similarity score
-            "metadata": metadata            # Pass filename or other metadata
+            "score": round((1 - dist) * 100, 2),  
+            "metadata": metadata
         }
         for doc, dist, metadata in zip(results["documents"][0], results["distances"][0], results["metadatas"][0])
     ]

@@ -29,14 +29,15 @@ Project Structure
 ```
 
 MCP/
-├── agents/             # Agent logic (URL, doc, Tavily, etc.)
-├── core/               # Orchestration logic
-├── graph/              # LangGraph-based dynamic flow builder
-├── llm/                # Granite LLM and prompt templates
-├── sample\_doc/         # Sample PDF used for testing
-├── main.py             # FastAPI entrypoint
-├── requirements.txt    # Python package dependencies
-├── conda\_env.yml       # Conda environment (optional)
+├── agents/ # Agent logic (URL, doc, Tavily, etc.)
+├── core/ # Orchestration logic
+├── graph/ # LangGraph-based dynamic flow builder
+├── llm/ # Granite LLM and prompt templates
+├── sample_doc/ # Sample PDF used for testing
+├── utils/ # Reranker logic (e.g., reranker.py)
+├── main.py # FastAPI entrypoint
+├── requirements.txt # Python package dependencies
+├── conda_env.yml # Conda environment (optional)
 └── .gitignore
 
 ````
@@ -139,7 +140,7 @@ Request:
 ```json
 {
   "query": "What is the latest sports news?",
-  "agents": ["chromadb", "document", "tavily", "universal_kb"],
+  "agents": ["crawler", "document", "tavily", "universal_kb"],
   "url_collections": ["uuid1"],
   "doc_collections": ["uuid2"]
 }
@@ -150,10 +151,10 @@ Response:
 ```json
 {
   "llm_response": "The latest sports news is...",
-  "data_sources": ["chromadb_url", "chromadb_doc", "tavily", "universal_kb"],
+  "data_sources": ["crawler", "chromadb_doc", "tavily", "universal_kb"],
   "chunks": [
     {
-      "agent": "chromadb_url",
+      "agent": "crawler",
       "chunk": "...",
       "score": 0.91,
       "source_url": "https://example.com"
